@@ -51,10 +51,9 @@ export class Userservice {
 
     }
     async getUserByid(id:string) {
-        console.log("----------------------------------------------------------------------")
-
         return await this.userModel.findById(id)
     }
 
+        
     }
 

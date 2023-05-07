@@ -9,12 +9,12 @@ export class UserController {
 
     @Get()
     async getUser(@Request() req) {
-        const {userID} = req?.user
-        const user = await this.userService.getUserByid(userID)
+        const {userId} = req?.user
+        const user = await this.userService.getUserByid(userId)
 
         if(!user) {
             throw new BadRequestException(userMessageHelper.GET_USER_NOT_FOUND)
-            console.log("----------------------------------------------------------------------")
+            
         }
         return {
             name: user.name,
