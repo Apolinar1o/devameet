@@ -4,5 +4,9 @@ export const userMessageHelper = {
     REGISTER_EMAIL_NOT_VALID : "Email informado não é valido",
     REGISTER_EXIST_EMAIL_ACCOUNT : "Email informado já existe",
     REGISTER_PASSWORD_NOT_VALID: "Senha informado não é valido, ela ´precisa ter de 4 a 12 caracteres e conter pelor menos um caracter Maisculo, um minusculo, um numero e caracter especial",
-    GET_USER_NOT_FOUND : 'usuario não encontrado'
+    GET_USER_NOT_FOUND : 'usuario não encontrado',
+    UPDATE_SUCCESFULY: "update feito com sucesso",
+    UPDATE_FAILED: "ocorreu um erro no update",
+    
+
 }

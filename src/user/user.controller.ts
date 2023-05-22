@@ -1,26 +1,35 @@
-import {Controller, Get, Request, BadRequestException} from "@nestjs/common"
+import {Get, Request, Controller, BadRequestException, Put, Body, HttpCode, HttpStatus} from "@nestjs/common"
 import { Userservice } from "./user.service";
 import { userMessageHelper } from "./helpers/messages.helper";
 
-
 @Controller("user")
-export class UserController {
-    constructor(private readonly userService:Userservice){}
+export class userController  {
+    constructor(private readonly userService: Userservice ){}
 
     @Get()
     async getUser(@Request() req) {
-        const {userId} = req?.user
-        const user = await this.userService.getUserByid(userId)
+        const {userid} = req?.user
+        const user = await this.userService.getUserById(userid)
 
         if(!user) {
             throw new BadRequestException(userMessageHelper.GET_USER_NOT_FOUND)
-            
         }
         return {
             name: user.name,
             email: user.email,
-            avatar: user.avatar,
+            avatar: user.email,
             id: user._id
         }
     }
-}
+    @Put()
+    @HttpCode(HttpStatus.OK) 
+    async uodateUser(@Request() req, @Body() dto) {
+        console.log("1111111111111111111")
+            const {userid} = req?.user
+            await this.userService.updateUser(userid, dto)
+            
+            return {message: userMessageHelper.UPDATE_SUCCESFULY}
+
+        
+    }
+} 
