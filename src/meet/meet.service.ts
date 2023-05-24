@@ -18,20 +18,22 @@ export class MeetService {
 
     async getMeetByUser(userId: string) {
         this.logger.debug('getmeetsByUser - ' + userId)
-        return await this.model.find({user: userId}) 
+        const retorno =  await this.model.find({user: userId}) 
+        console.log(retorno)
+        return retorno
     }
 
     async createMeet(userId: string, dto: createMeetDto) {
         this.logger.debug("createMeet - " + userId)
-        
         const user = await this.userService.getUserById(userId)
-
+    
         const meet = {
             ...dto,
             user, 
             link: linkGenerator(),
 
         }
+  
         const createdMeet = new this.model(meet)
         return await createdMeet.save()
     }

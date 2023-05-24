@@ -1,7 +1,7 @@
 const chars = "0123456789abcdefghijklmopqrstuvwxyz"
 const size = 12
 
-export const linkGenerator = () => {
+ export const linkGenerator = () => {
     let randomString = ""
     for( let i = 0; i < size ;i++) {
          let rnumber = Math.floor(Math.random() * 34)
@@ -10,6 +10,10 @@ export const linkGenerator = () => {
 
          } else {
             randomString += chars[rnumber]
-         }                                  
+         }       
+       
+              
 }
+      return randomString                   
  }
+

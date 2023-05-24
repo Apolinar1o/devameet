@@ -10,10 +10,13 @@ export class userController  {
     async getUser(@Request() req) {
         const {userid} = req?.user
         const user = await this.userService.getUserById(userid)
+    
+        console.log("11111111111111111111111111111111111111111111111")
 
         if(!user) {
             throw new BadRequestException(userMessageHelper.GET_USER_NOT_FOUND)
         }
+        console.log("11111111111111111111111111111111111111111111111")
         return {
             name: user.name,
             email: user.email,
@@ -24,7 +27,6 @@ export class userController  {
     @Put()
     @HttpCode(HttpStatus.OK) 
     async uodateUser(@Request() req, @Body() dto) {
-        console.log("1111111111111111111")
             const {userid} = req?.user
             await this.userService.updateUser(userid, dto)
             

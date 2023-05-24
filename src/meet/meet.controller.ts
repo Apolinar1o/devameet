@@ -11,10 +11,9 @@ export class MeetController {
 
     @Get()
     async getUser(@Request() req) {
-        const {userId} = req?.user
+        const {userid} = req?.user
 
-        const result = await this.service.getMeetByUser(userId)
-
+        const result = await this.service.getMeetByUser(userid)
         return result.map(m => ({
              id: m._id.toString(),
              name: m.name,
@@ -23,18 +22,24 @@ export class MeetController {
              
             } 
             ) as getMeetDto)
+         
     }
     @Post()
+
     async createMeet(@Request() req, @Body() dto: createMeetDto) {
-        const {userId} = req?.user
-        await this.service.createMeet(userId, dto)
+        const {userid} = req?.user
+        await this.service.createMeet(userid, dto)
 
     }
+
+
     @Delete(":id")
     async deleteMeetByUser(@Request() req, @Param() params) {
-        const {userId} = req?.user
+  
+            const {userid} = req?.user
+    
         const {id} = params
-        await this.service.deleteMeetByUser(userId, id)
+        await this.service.deleteMeetByUser(userid, id)
 
     }
 }
