@@ -11,12 +11,10 @@ export class userController  {
         const {userid} = req?.user
         const user = await this.userService.getUserById(userid)
     
-        console.log("11111111111111111111111111111111111111111111111")
 
         if(!user) {
             throw new BadRequestException(userMessageHelper.GET_USER_NOT_FOUND)
         }
-        console.log("11111111111111111111111111111111111111111111111")
         return {
             name: user.name,
             email: user.email,
