@@ -24,9 +24,9 @@ export class MeetService {
     async getMeetByUser(userId: string) {
         this.logger.debug('getmeetsByUser - ' + userId)
 
-        const res =  await this.model.find({user: userId}) 
-        console.log(res)
-        return res
+         return await this.model.find({users: userId}) 
+
+         
          
   
     }

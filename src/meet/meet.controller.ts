@@ -57,8 +57,10 @@ export class MeetController {
   
         const {userid} = req?.user
         const {id} = params
-
+    
         await this.service.update(id, userid, dto)
+       
+
 
     }
 }

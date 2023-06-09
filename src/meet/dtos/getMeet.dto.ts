@@ -1,6 +1,6 @@
 export class getMeetDto {
-    id: String
-    color: String
-    name: String
-    link: String
+    id: string
+    color: string
+    name: string
+    link: string
 }
