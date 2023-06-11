@@ -24,7 +24,20 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   private logger = new Logger(RoomGateway.name)
   private activeSockets: activeSocketType[] = []
 
-  handleDisconnect(client: any, ...arg:any[]) {
+  async handleDisconnect(client: any, ...arg:any[]) {
+
+    const existingSocket = this.activeSockets.find(
+      socket=> socket.id ===client.id
+    )
+    if(!existingSocket) return
+
+    this.activeSockets = this.activeSockets.filter(
+      socket=> socket.id !==client.id
+    )
+
+    await this.service.DeleteUserPosition(client.id)
+    client.broadcast.emit(`${existingSocket.room}-remove-user`, {sockedId: client.id})
+    
     this.logger.debug(`Client: ${client.id} disconnected `)
   }
   handleConnection(client: any, ...args: any[]) {
@@ -85,4 +98,22 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         const user = await this.service.listUserPositionByLink(link)
         this.wss.emit(`${link}-update-user-list`, {user})
   }
+
+  @SubscribeMessage("call-user") 
+  async callUSer ( client: Socket, data: any) {
+  this.logger.debug(`callUUser: ${client.id} to: ${data.to}`)
+  client.to(data.to).emit("call-made", {
+    offer: data.offer,
+    socket: client.to
+  }) 
+  }
+
+  @SubscribeMessage("make-answer") 
+  async makeAnswer ( client: Socket, data: any) {
+  this.logger.debug(`makeAnswer: ${client.id} to: ${data.to}`)
+  client.to(data.to).emit("makeAnswer", {
+    answer: data.answer,
+    socket: client.to
+  }) 
+}
 }
