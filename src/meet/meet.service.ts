@@ -23,8 +23,7 @@ export class MeetService {
 
     async getMeetByUser(userId: string) {
         this.logger.debug('getmeetsByUser - ' + userId)
-
-         return await this.model.find({users: userId}) 
+         return await this.model.find({user: userId}) 
 
          
          
@@ -34,22 +33,21 @@ export class MeetService {
     async createMeet(userId: string, dto: createMeetDto) {
         this.logger.debug("createMeet - " + userId)
         const user = await this.userService.getUserById(userId)
-    
         const meet = {
             ...dto,
             user, 
             link: linkGenerator(),
 
         }
-  
         const createdMeet = new this.model(meet)
         return await createdMeet.save()
     }
     
     async deleteMeetByUser(userId: string, meetId: string) {
-        this.logger.debug("deleteMeetByUser - " + userId + "- " + meetId)
+        this.logger.debug("deleteMeetByUser - " + userId + " - " + meetId)
         
         const user = await this.model.deleteOne({user: userId, _id: meetId})
+        return "apagou"
 
     }
 
@@ -70,7 +68,7 @@ export class MeetService {
         const user = await this.userService.getUserById(userId)
 
         const meet = await this.model.findOne({user, _id: meetId})
-        console.log(meet)
+     
         if(!meet) {
             throw new BadRequestException(meetMessageHelpers.UPDATE_MEET_NOT_FOUND)
         }

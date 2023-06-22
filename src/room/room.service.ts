@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { meetObject, meetObjectDocument } from 'src/meet/schemas/meetObject.schema';
 import { position, positionDocument } from './schemas/position.schema';
 import { Userservice } from 'src/user/user.service';
-import { meetMessageHelpers } from 'src/meet/helpers/meetMessageHelpers';
 import { roomMessageHelpers } from './helpers/roomMessagehelpers.helpers';
 import { updatePositionDto } from './dto/updatePosition.dto';
 import { toggleMute } from './dto/toggleMute.dto';
@@ -21,83 +20,98 @@ export class RoomService {
         private readonly userservice: Userservice
     ){}
 
-    async getRoom(link:string) {
-        this.logger.debug(`getRoom - ${link}`)
+    async getRoom(link: string) {
+        this.logger.debug(`getRoom - ${link}`);
 
-        const meet = await this._getMeet(link)
-        if(meet) {
-            const objects = await this.objectModel.find({meet})
+        const meet = await this._getMeet(link);
+        const objects = await this.objectModel.find({meet});
 
-            return {
-                link, 
-                name: meet.name,
-                color: meet.color,
-                objects
-            }
-        }
-
-    }
-    async _getMeet(link:string) {
-        const meet = await this.meetModel.findOne({link})
-        if(!meet) {
-            throw new BadRequestException({message: roomMessageHelpers.JOIN_LINK_NOT_VALID})
-        }
-        return meet
+       
+        return {
+            link,
+            name: meet.name,
+            color: meet.color,
+            objects,
+            
+        };
     }
 
-    async listUserPositionByLink(link: string) {
-        this.logger.debug(`listUserPositionByLink - ${link}`)
+    async listUsersPositionByLink(link: string){
+        this.logger.debug(`listUsersPositionByLink - ${link}`);
 
-        const meet = await this._getMeet(link)
-
-        return await this.positionModel.find({meet})
-    }
-    async DeleteUserPosition( clientId: string) {
-        this.logger.debug(`DeleteRoom - ${clientId}`)
-
-        const MeetDelete = await this.positionModel.deleteMany({clientId})
+        const meet = await this._getMeet(link);
+        return await this.positionModel.find({meet});
     }
 
-    async updateUserPosition(cliendId: string, dto: updatePositionDto) {
-        this.logger.debug(`updateUserPosition - ${dto.link}`)
+    async deleteUsersPosition(clientId: string){
+        this.logger.debug(`deleteUsersPosition - ${clientId}`);
+        return await this.positionModel.deleteMany({clientId});
+    }
 
-        const meet = await this._getMeet(dto.link)
-        const user = await this.userservice.getUserById(dto.userId)
+    async updateUserPosition(clientId: string, dto : updatePositionDto){
+        this.logger.debug(`listUsersPositionByLink - ${dto.link}`);
 
-        if(!user) {
-            throw new BadRequestException({message: roomMessageHelpers.JOIN_USER_NOT_VALID})
+        const meet = await this._getMeet(dto.link);
+        const user = await this.userservice.getUserById(dto.userId);
+
+        if(!user){
+            throw new BadRequestException(roomMessageHelpers.JOIN_USER_NOT_VALID);
         }
 
         const position = {
             ...dto,
-            cliendId,
-            user, 
-            meet, 
+            clientId,
+            user,
+            meet,
             name: user.name,
-            avatar: user.avatar
-        }
-        const userInRoom = await this.positionModel.find({meet })
-
-        if(userInRoom && userInRoom.length > 10) {
-            throw  new BadRequestException(roomMessageHelpers.ROOM_MAX_USERS)
+            avatar: user.avatar || 'avatar_01'
         }
 
-        const loggedUserInRoom = userInRoom.find(u => 
-            u.user.toString() === user._id.toString() || u.clientId === cliendId)
+        const usersInRoom = await this.positionModel.find({meet});
+        const loogedUserInRoom = usersInRoom.find(u =>
+            u.user.toString() === user._id.toString() || u.clientId === clientId);
+        
+        if(loogedUserInRoom){
+            await this.positionModel.findByIdAndUpdate({_id: loogedUserInRoom._id},position);
+        }else{
+            if(usersInRoom && usersInRoom.length > 10){
+                throw new BadRequestException(roomMessageHelpers.ROOM_MAX_USERS);
+            };
+
+            await this.positionModel.create(position);
+        }
+    }
+
+    async updateUserMute(dto:toggleMute){
+        this.logger.debug(`updateUserMute - ${dto.link} - ${dto.userId}`);
+
+        const meet = await this._getMeet(dto.link);
+        const user = await this.userservice.getUserById(dto.userId);
+    
+        return await this.positionModel.updateMany({user, meet}, {muted: dto.muted});
+    }
+
+    async _getMeet(link: string) {
+        const meet = await this.meetModel.findOne({link});
+        if (!meet) {
             
-            if(loggedUserInRoom) {
-                await this.positionModel.findByIdAndUpdate({_id: loggedUserInRoom.id}, position)
-            } else {    
-                await this.positionModel.create(position)
-            }
+            throw new   BadRequestException(roomMessageHelpers.JOIN_LINK_NOT_VALID);
         }
 
-        async updateUserMute(dto: toggleMute) {
-            this.logger.debug(`updateUserMute - ${dto.userId} - ${dto.link}`)
-
-            const meet = await this._getMeet(dto.link)
-            const user = await this.userservice.getUserById(dto.userId)
-            await this.positionModel.updateMany({user, meet}, {muted: dto.muted})
+        return meet;
+    }
+    async getPos(link: string, userId: string) {
+        const meet = await this._getMeet(link);
+        const position = await this.positionModel.findOne({ meet, user: userId });
+        console.log("---" +position)
+        if (position) {
+          const { x, y, orientation } = position;
+          return [x, y, orientation];
         }
-  
+      }
+
+    async existing(link, userId, ) {
+        const exists = await this.positionModel.find({user: userId })
+        return exists
+    }
 }

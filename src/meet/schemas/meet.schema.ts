@@ -8,13 +8,13 @@ export class meet {
     user: user
 
     @Prop({required: true})
-    name: string
+    name: String
 
     @Prop({required: true})
-    color: string
+    color: String
 
     @Prop({required: true})
-    link: string
+    link: String
     
 }
 

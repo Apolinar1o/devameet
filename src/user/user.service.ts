@@ -4,7 +4,6 @@ import { user,userDOcument } from "./schemas/user.schemas"
 import { Model,} from "mongoose"
 import { registerDto } from "./dtos/register.dto"
 import * as CryptoJS from "crypto-js"
-import { Promise } from "mongoose"
 import { updateUSerDto } from "./dtos/updateUser.dto"
 
 

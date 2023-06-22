@@ -52,6 +52,8 @@ export class MeetController {
         const {id} = params
         return await this.service.getMeetObjects(id, userid)
  }
+
+
  @Put(":id")
     async UpdateMeet(@Request() req, @Param() params, @Body() dto: updateMeetDto) {
   

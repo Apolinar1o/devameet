@@ -14,4 +14,4 @@ export class user {
     avatar:string
 }
 
-export const UserScheme = SchemaFactory.createForClass(user )
+export const UserScheme = SchemaFactory.createForClass(user)
