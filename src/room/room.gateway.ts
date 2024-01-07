@@ -51,14 +51,13 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 async handleJoin(client: Socket, payload: joinRoomDto) {
   const { link, userId } = payload;
 
-  // const existingSocket = this.activeSockets.find(
-  //   (socket) => socket.room === link && socket.userId === userId,
-  // );
-  console.log("start")
-   const existing = await this.service.existing(link, userId)
+  const existingSocket = this.activeSockets.find(
+    (socket) => socket.room === link && socket.userId === userId,
+  );
+  //  const existing = await this.service.existing(link, userId)
   //caso não seja a primeira bez
-  if (existing) {
-    console.log("=============================")
+  console.log(client + " " + client.id)
+  if (!existingSocket) {
     this.activeSockets.push({ room: link, id: client.id, userId });
 
     const pos = await this.service.getPos(link, userId);
@@ -108,9 +107,10 @@ async handleJoin(client: Socket, payload: joinRoomDto) {
   const users = await this.service.listUsersPositionByLink(link);
   this.wss.emit(`${link}-update-user-list`, { users });
 
-  if (!existing) {
+  if (!existingSocket) {
     client.broadcast.emit(`${link}-add-user`, { user: client.id });
   }
+  this.logger.debug(`Socket client: ${client.id} start to join room ${link}`);
 }
 
 
@@ -136,7 +136,6 @@ async handleJoin(client: Socket, payload: joinRoomDto) {
     await this.service.updateUserMute(payload);
     const users = await this.service.listUsersPositionByLink(link);
     this.wss.emit(`${link}-update-user-list`, { users });
-    console.log("mute?")
   }
 
   @SubscribeMessage('call-user')

@@ -10,6 +10,15 @@ export class MeetController {
         private readonly service: MeetService
     ){}
 
+    @Get(":id")
+    async GetMeetById(@Request() req, @Param() params) {
+  
+        const {userid} = req?.user
+        const {id} = params
+
+        return await this.service.getMeetById(id, userid);
+    }
+    
     @Get()
     async getUser(@Request() req) {
         const {userid} = req?.user
@@ -27,6 +36,9 @@ export class MeetController {
         
          
     }
+
+
+
     @Post()
 
     async createMeet(@Request() req, @Body() dto: createMeetDto) {
@@ -40,8 +52,7 @@ export class MeetController {
     async deleteMeetByUser(@Request() req, @Param() params) {
   
             const {userid} = req?.user
-    
-        const {id} = params
+            const {id} = params
         await this.service.deleteMeetByUser(userid, id)
 
     }

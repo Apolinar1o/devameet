@@ -11,9 +11,8 @@ export class meetObject {
     @Prop({required: true})
     y: number
     @Prop({required: true})
-    zindex: number
-    @Prop({required: true})
-
+    zIndex: number
+    @Prop()
     orientation: string    
     @Prop()
     name: string

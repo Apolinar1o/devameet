@@ -24,7 +24,7 @@ export class updateMeetObjectDto {
     @Max(8, {message: meetMessageHelpers.UPDATE_XY_NOT_VALID})
     y: number
     @IsNumber({}, {message: meetMessageHelpers.UPDATE_ZINDEX_NOT_VALID})
-    zindex: number
+    zIndex: number
     @IsString({message: meetMessageHelpers.UPDATE_ORIENTATION_NOT_VALID})
     orientation: string
     

@@ -23,15 +23,15 @@ export class RoomService {
     async getRoom(link: string) {
         this.logger.debug(`getRoom - ${link}`);
 
-        const meet = await this._getMeet(link);
-        const objects = await this.objectModel.find({meet});
+        const meet = (await this._getMeet(link));
+        const objects = await this.objectModel.find({meet: meet._id});
 
-       
+        
         return {
             link,
             name: meet.name,
             color: meet.color,
-            objects,
+            objects
             
         };
     }
@@ -84,14 +84,14 @@ export class RoomService {
 
     async updateUserMute(dto:toggleMute){
         this.logger.debug(`updateUserMute - ${dto.link} - ${dto.userId}`);
-
         const meet = await this._getMeet(dto.link);
         const user = await this.userservice.getUserById(dto.userId);
-    
         return await this.positionModel.updateMany({user, meet}, {muted: dto.muted});
     }
 
     async _getMeet(link: string) {
+        this.logger.debug(`_getMeet - ${link}`);
+
         const meet = await this.meetModel.findOne({link});
         if (!meet) {
             
@@ -103,7 +103,6 @@ export class RoomService {
     async getPos(link: string, userId: string) {
         const meet = await this._getMeet(link);
         const position = await this.positionModel.findOne({ meet, user: userId });
-        console.log("---" +position)
         if (position) {
           const { x, y, orientation } = position;
           return [x, y, orientation];
