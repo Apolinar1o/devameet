@@ -24,7 +24,7 @@ export class position {
     @Prop({required: true})
     orientation: string
     @Prop({default: false})
-    muted: string
+    muted: boolean
 
 }
 export const positionSchema = SchemaFactory.createForClass(position)
