@@ -114,25 +114,26 @@ async handleJoin(client: Socket, payload: joinRoomDto) {
 }
 
 
-  @SubscribeMessage('move')
-  async handleMove(client: Socket, payload: updatePositionDto) {
-    const { link, userId, x, y, orientation } = payload;
-    const dto = {
-      link,
-      userId,
-      x,
-      y,
-      orientation
-    } as updatePositionDto
+@SubscribeMessage('move')
+async handleMove(client: Socket, payload: updatePositionDto) {
+  const { link, userId, x, y, orientation } = payload;
+  const dto = {
+    link,
+    userId,
+    x,
+    y,
+    orientation
+  } as updatePositionDto
 
-    await this.service.updateUserPosition(client.id, dto);
-    const users = await this.service.listUsersPositionByLink(link);
-    this.wss.emit(`${link}-update-user-list`, { users });
-  }
+  await this.service.updateUserPosition(client.id, dto);
+  const users = await this.service.listUsersPositionByLink(link);
+  this.wss.emit(`${link}-update-user-list`, { users });
+}
 
   @SubscribeMessage('toggl-mute-user')
   async handleToglMute(_: Socket, payload: toggleMute) {
     const { link } = payload;
+    console.log("toggle mute comecou")
     await this.service.updateUserMute(payload);
     const users = await this.service.listUsersPositionByLink(link);
     this.wss.emit(`${link}-update-user-list`, { users });
@@ -146,6 +147,7 @@ async handleJoin(client: Socket, payload: joinRoomDto) {
       socket: client.id
     });
   }
+
 
   @SubscribeMessage('make-answer')
   async makeAnswer(client: Socket, data: any) {
